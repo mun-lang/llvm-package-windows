@@ -20,27 +20,35 @@ if (!(Get-Command "7z" -errorAction SilentlyContinue)) {
     scoop install 7z
 }
 
-$current_dir = (Get-Location)
-$source_dir = "$current_dir\llvm"
-$build_dir = "$source_dir\build"
-$install_dir = "$current_dir\llvm-$llvm_version-windows-x64-msvc15"
 
-# Clone the llvm repository
-git clone --single-branch --branch "llvmorg-$llvm_version" --depth 1 "https://github.com/llvm/llvm-project.git" $source_dir
+function build-msvc {
+    $msvc_version = $args[0]
+    $msvc_cmake_generator = $args[1]
+    $current_dir = (Get-Location)
+    $source_dir = "$current_dir\llvm"
+    $build_dir = "$source_dir\build"
+    $install_dir = "$current_dir\llvm-$llvm_version-windows-x64-$msvc_version"
 
-# Construct a build directory and run cmake
-New-Item -ItemType "directory" -Force -Path $build_dir
-cmake -S "$source_dir\llvm" -B $build_dir -G "Visual Studio 15 2017" -Thost=x64 -A x64 -DLLVM_ENABLE_PROJECTS="lld;clang" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$install_dir"
+    # Clone the llvm repository
+    git clone --single-branch --branch "llvmorg-$llvm_version" --depth 1 "https://github.com/llvm/llvm-project.git" $source_dir
 
-# Build the project
-New-Item -ItemType "directory" -Force -Path $install_dir
-cmake --build $build_dir --target INSTALL --config Release
+    # Construct a build directory and run cmake
+    New-Item -ItemType "directory" -Force -Path $build_dir
+    cmake -S "$source_dir\llvm" -B $build_dir -G $msvc_cmake_generator -Thost=x64 -A x64 -DLLVM_ENABLE_PROJECTS="lld;clang" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$install_dir"
 
-# Create an archive from the installation
-7z a -mx9 "llvm-$llvm_version-windows-x64-msvc15.7z" "$install_dir\*"
+    # Build the project
+    New-Item -ItemType "directory" -Force -Path $install_dir
+    cmake --build $build_dir --target INSTALL --config Release
 
-# Clean up all the directories
-Get-ChildItem -Path $install_dir -Recurse | Remove-Item -force -recurse
-Get-ChildItem -Path $source_dir -Recurse | Remove-Item -force -recurse
-Remove-Item $install_dir -Force 
-Remove-Item $source_dir -Force 
+    # Create an archive from the installation
+    7z a -mx9 "llvm-$llvm_version-windows-x64-$msvc_version.7z" "$install_dir\*"
+
+    # Clean up all the directories
+    Get-ChildItem -Path $install_dir -Recurse | Remove-Item -force -recurse
+    Get-ChildItem -Path $source_dir -Recurse | Remove-Item -force -recurse
+    Remove-Item $install_dir -Force 
+    Remove-Item $source_dir -Force 
+}
+
+build-msvc "msvc15" "Visual Studio 15 2017"
+build-msvc "msvc16" "Visual Studio 16 2019"

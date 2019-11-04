@@ -8,7 +8,7 @@ binaries so we can use those there.
 
 ## Dependencies
 
-- A version of Visual Studio 2017 must be installed
+- A version of Visual Studio 2017 and Visual Studio 2019 must be installed
 - cmake
 - 7z
 
