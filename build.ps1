@@ -1,4 +1,4 @@
-$llvm_version = "7.1.0"
+$llvm_version = "8.0.1"
 
 # Check if scoop is installed
 if (!(Get-Command "scoop" -errorAction SilentlyContinue)) {
@@ -34,7 +34,16 @@ function build-msvc {
 
     # Construct a build directory and run cmake
     New-Item -ItemType "directory" -Force -Path $build_dir
-    cmake -S "$source_dir\llvm" -B $build_dir -G $msvc_cmake_generator -Thost=x64 -A x64 -DLLVM_ENABLE_PROJECTS="lld;clang" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$install_dir"
+    cmake `
+        -S "$source_dir\llvm" `
+        -B $build_dir `
+        -G $msvc_cmake_generator `
+        -Thost=x64 `
+        -A x64 `
+        -DLLVM_ENABLE_PROJECTS="lld;clang" `
+        -DCMAKE_BUILD_TYPE=Release `
+        -DCMAKE_INSTALL_PREFIX="$install_dir" 
+        #-DLLVM_ENABLE_ASSERTIONS=ON
 
     # Build the project
     New-Item -ItemType "directory" -Force -Path $install_dir
@@ -50,5 +59,5 @@ function build-msvc {
     Remove-Item $source_dir -Force 
 }
 
-build-msvc "msvc15" "Visual Studio 15 2017"
 build-msvc "msvc16" "Visual Studio 16 2019"
+build-msvc "msvc15" "Visual Studio 15 2017"
