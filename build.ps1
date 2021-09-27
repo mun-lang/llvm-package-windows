@@ -42,7 +42,9 @@ function build-msvc {
         -A x64 `
         -DLLVM_ENABLE_PROJECTS="lld;clang" `
         -DCMAKE_BUILD_TYPE=Release `
-        -DCMAKE_INSTALL_PREFIX="$install_dir" 
+        -DCMAKE_INSTALL_PREFIX="$install_dir" `
+        -DLLVM_ENABLE_LIBXML2=OFF `
+        -DLLVM_ENABLE_ZLIB=OFF
         #-DLLVM_ENABLE_ASSERTIONS=ON
 
     # Build the project
@@ -53,10 +55,10 @@ function build-msvc {
     7z a -mx9 "llvm-$llvm_version-windows-x64-$msvc_version.7z" "$install_dir\*"
 
     # Clean up all the directories
-    Get-ChildItem -Path $install_dir -Recurse | Remove-Item -force -recurse
-    Get-ChildItem -Path $source_dir -Recurse | Remove-Item -force -recurse
-    Remove-Item $install_dir -Force 
-    Remove-Item $source_dir -Force 
+    Get-ChildItem -Path $install_dir -Force -Recurse | Remove-Item -force -recurse -Confirm:$false
+    Get-ChildItem -Path $source_dir -Force -Recurse | Remove-Item -force -recurse -Confirm:$false
+    Remove-Item $install_dir -Force -Recurse -Confirm:$false
+    Remove-Item $source_dir -Force -Recurse -Confirm:$false
 }
 
 build-msvc "msvc16" "Visual Studio 16 2019"
