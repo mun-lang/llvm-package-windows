@@ -1,4 +1,4 @@
-$llvm_version = "13.0.0"
+$llvm_version = "12.0.1"
 
 # Check if scoop is installed
 if (!(Get-Command "scoop" -errorAction SilentlyContinue)) {
@@ -44,7 +44,8 @@ function build-msvc {
         -DCMAKE_BUILD_TYPE=Release `
         -DCMAKE_INSTALL_PREFIX="$install_dir" `
         -DLLVM_ENABLE_LIBXML2=OFF `
-        -DLLVM_ENABLE_ZLIB=OFF
+        -DLLVM_ENABLE_ZLIB=OFF `
+        #-DLLVM_USE_CRT_RELEASE=MT
         #-DLLVM_ENABLE_ASSERTIONS=ON
 
     # Build the project
