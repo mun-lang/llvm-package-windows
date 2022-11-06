@@ -44,8 +44,8 @@ function build-msvc {
         -DCMAKE_BUILD_TYPE=Release `
         -DCMAKE_INSTALL_PREFIX="$install_dir" `
         -DLLVM_ENABLE_LIBXML2=OFF `
-        -DLLVM_ENABLE_ZLIB=OFF `
-        #-DLLVM_USE_CRT_RELEASE=MT
+        -DLLVM_ENABLE_ZLIB=OFF 
+        # -DLLVM_USE_CRT_RELEASE=MT
         #-DLLVM_ENABLE_ASSERTIONS=ON
 
     # Build the project
@@ -62,5 +62,6 @@ function build-msvc {
     Remove-Item $source_dir -Force -Recurse -Confirm:$false
 }
 
+build-msvc "msvc17" "Visual Studio 17 2022"
 build-msvc "msvc16" "Visual Studio 16 2019"
 build-msvc "msvc15" "Visual Studio 15 2017"
