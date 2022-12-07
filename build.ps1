@@ -64,4 +64,3 @@ function build-msvc {
 
 build-msvc "msvc17" "Visual Studio 17 2022"
 build-msvc "msvc16" "Visual Studio 16 2019"
-build-msvc "msvc15" "Visual Studio 15 2017"
